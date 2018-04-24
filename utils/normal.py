@@ -135,3 +135,17 @@ def add(a: int, b:int) -> int:
 
 c = add(3, 4)
 print(c)
+
+
+def t():
+    n = 10
+    def inner():
+        nonlocal n
+        n += 1
+        print(n)
+        return n
+    inner()
+    print(n)
+    return n
+
+print(t())

@@ -3,6 +3,16 @@
 
 import numpy
 
+"""
+array：创建数组
+dtype：指定数据类型
+zeros：创建数据全为0
+ones：创建数据全为1
+empty：创建数据接近0
+arrange：按指定范围创建数据
+linspace：创建线段
+"""
+
 # #创建一维数组
 # x = numpy.array(['a','b',8,123])
 # print(x)
@@ -43,7 +53,7 @@ print(y)
 # print(a**b)
 # # print(a*c)
 
-# # 数组形状
+# # 数组形状 二维,行数和列数
 # a.shape 
 # shape(a)
 # # 数组中的数据类型

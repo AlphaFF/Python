@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
-from proxyPools.ipManager import ProxyManager
+from ipManager import ProxyManager
 import requests
 from threading import Thread
 from apscheduler.schedulers.blocking import BlockingScheduler
@@ -67,6 +67,7 @@ def main(process_num=30):
 
 
 def run():
+    main()
     sched = BlockingScheduler()
     sched.add_job(main, 'interval', minutes=5)
     sched.start()

@@ -2,9 +2,9 @@
 # coding=utf-8
 
 from multiprocessing import Process
-from proxyPools.api import run as ApiRun
-from proxyPools.validScheduler import run as ValidRun
-from proxyPools.refreshSchedule import run as RefreshRun
+from api import run as ApiRun
+from validScheduler import run as ValidRun
+from refreshSchedule import run as RefreshRun
 
 def run():
     p_list = []

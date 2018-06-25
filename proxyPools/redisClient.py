@@ -7,9 +7,9 @@ import random
 
 class RedisClient(object):
     # 数据库的连接
-    def __init__(self, name, host, port):
+    def __init__(self, name, host, port, passwd):
         self.name = name
-        self.__conn = redis.Redis(host=host, port=port, db=1)
+        self.__conn = redis.Redis(host=host, port=port, db=1, password=passwd)
 
     # 向数据库中插入数据
     def put(self, key):
@@ -62,7 +62,7 @@ class RedisClient(object):
 
 
 if __name__ == "__main__":
-    redis_conn = RedisClient('proxy', 'localhost', 6379)
+    redis_conn = RedisClient('proxy', 'localhost', 6379, 'redis')
     key = '10.1.1.3:3234'
     redis_conn.put(key)
     proxy = redis_conn.get()

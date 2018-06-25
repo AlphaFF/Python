@@ -1,13 +1,13 @@
 #!/usr/bin python3
 # coding:utf-8
 
-from proxyPools.getter import ProxyGetter
-from proxyPools.redisClient import RedisClient
+from getter import ProxyGetter
+from redisClient import RedisClient
 
 
 class ProxyManager(object):
     def __init__(self):
-        self.db = RedisClient('proxy', '106.14.35.43', 6379)
+        self.db = RedisClient('proxy', '121.40.184.36', 6379, 'redis')
         self.raw_proxy = 'raw'
         self.useful_proxy = 'useful'
         pass

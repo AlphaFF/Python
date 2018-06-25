@@ -3,7 +3,7 @@
 
 import requests
 
-from proxyPools.ipManager import ProxyManager
+from ipManager import ProxyManager
 
 
 def validUsefulProxy(proxy):
@@ -47,6 +47,8 @@ def run():
     p.main()
 
 if __name__ == '__main__':
-    p = ProxyValidSchedule()
-    p.main()
+    # p = ProxyValidSchedule()
+    # p.main()
+    t = validUsefulProxy('101.236.22.141:8866')
+    print(t)
 

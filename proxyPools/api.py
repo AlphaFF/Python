@@ -9,9 +9,9 @@ app = Flask(__name__)
 
 api_list = {
     'get': 'get an usable proxy',
-    'refresh': 'refresh proxy pool',
+    # 'refresh': 'refresh proxy pool',
     'get_all': 'get all proxy from proxy pool',
-    'delete?proxy=127.0.0.1:8080': 'delete an unable proxy'
+    # 'delete?proxy=127.0.0.1:8080': 'delete an unable proxy'
 }
 
 

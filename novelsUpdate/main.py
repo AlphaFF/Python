@@ -43,12 +43,27 @@ def insert_content(_id, title, content, chapter):
     try:
         sql = 'insert into chapters (title, content, chapter, novel_id) values (%s, %s, %s, %s)'
         cursor.execute(sql, (title, content, chapter, _id))
+        conn.commit()
     except Exception as e:
         print(e)
+        conn.rollback()
+
+
+def get_ids(novel_id):
+    sql = 'select chapter from chapters where novel_id = {}'.format(novel_id)
+    print('sql:', sql)
+    cursor.execute(sql)
+    chapters = cursor.fetchall()
+    all_chapters = []
+    for chapter in chapters:
+        all_chapters.append(chapter[0])
+    # print(all_chapters)
+    return all_chapters
 
 
 def download_one(*args):
     _id, name = args
+    all_chapters = get_ids(_id)
     novel_url = get_novel(name)
     print('novel_url:', novel_url)
     if novel_url is not None:
@@ -63,16 +78,10 @@ def download_one(*args):
                 print(e)
             else:
                 # print(chapter, title, chapter_url)
-                content = get_chapter_content(chapter_url)
-                print(content)
-                # return _id, name, title, content, chapter
-                # try:
-                #     insert_content(_id, title, content, chapter)
-                # except Exception as e:
-                #     print(e)
-                #     conn.rollback()
-                # finally:
-                #     conn.commit()
+                if chapter not in all_chapters:
+                    content = get_chapter_content(chapter_url)
+                    insert_content(_id, title, content, chapter)
+                    return content
 
 
 def download_many_content(cc_list):
@@ -83,12 +92,7 @@ def download_many_content(cc_list):
             to_do.append(future)
         for future in futures.as_completed(to_do):
             res = future.result()
-            print('res:', res)
-            try:
-                conn.commit()
-            except Exception as e:
-                print(e)
-                conn.rollback()
+            print(res)
 
 
 def main():
@@ -96,13 +100,17 @@ def main():
     novels = get_novels(cursor)
     cc_list = [novel for novel in novels]
     download_many_content(cc_list)
+    cursor.close()
+    conn.close()      
 
 
 if __name__ == '__main__':
     conn = connect_sql()
+    print(conn)
     cursor = conn.cursor()
     # cc_list = [(novel[0], novel[1]) for novel in novels]
     # print(cc_list)
+    # get_ids(27)
     main()
     sched = BlockingScheduler()
     sched.add_job(main, 'interval', minutes=1)

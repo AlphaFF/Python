@@ -19,8 +19,12 @@ def get_novel(name):
         res = requests.get(url)
         if len(res.text):
             html = etree.HTML(res.text)
-            novel_url = html.xpath('//div[@class="search-list"]/ul/li[2]/span[2]/a/@href')[0]
-            return novel_url
+            books = html.xpath('//div[@class="search-list"]/ul/li')[1:]
+            for book in books:
+                book_name = book.xpath('./span[2]/a/text()')[0].strip()
+                if name == book_name:
+                    novel_url = book.xpath('./span[2]/a/@href')[0]
+                    return novel_url
         else:
             url = 'https://www.qu.la/SearchBook.php?keyword={}'.format(name)
             res = requests.get(url)

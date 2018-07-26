@@ -97,11 +97,14 @@ def download_many_content(cc_list):
 
 def main():
     print('time:', time.time())
-    novels = get_novels(cursor)
-    cc_list = [novel for novel in novels]
-    download_many_content(cc_list)
-    cursor.close()
-    conn.close()      
+    try:
+        novels = get_novels(cursor)
+        cc_list = [novel for novel in novels]
+        download_many_content(cc_list)
+        cursor.close()
+        conn.close()  
+    except Exception as e:
+        print(e)    
 
 
 if __name__ == '__main__':

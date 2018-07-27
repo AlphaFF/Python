@@ -50,15 +50,17 @@ def get_novel_info(novel_url):
 
 
 def get_novel_chapters(url):
-    logging.warning('get url content {}'.format(url))
+    # logging.warning('get url content {}'.format(url))
     res = requests.get(url)
     html = etree.HTML(res.text)
     # results = html.xpath('//div[@id="list"]/dl/dd/a[contains(text(), "章")]')[:10]
     results = html.xpath('//div[@id="list"]/dl/dd/a')[:10]
+    chapters = []
     for result in results:
         chapter = result.xpath('./text()')[0]
         chapter_url = url + result.xpath('./@href')[0]
-        yield chapter, chapter_url
+        chapters.append((chapter, chapter_url))
+    return chapters
 
 
 def get_chapter_content(url):

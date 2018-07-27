@@ -31,8 +31,8 @@ def connect_sql(
     return conn
 
 
-def get_novels(cursor):
-    sql = 'select id, name from novels'
+def get_novels():
+    sql = 'select id, name from novels limit 2, 3;'
     cursor.execute(sql)
     values = cursor.fetchall()
     for value in values:
@@ -61,7 +61,7 @@ def get_ids(novel_id):
     return all_chapters
 
 
-def download_one(*args):
+def download_one(args):
     _id, name = args
     all_chapters = get_ids(_id)
     novel_url = get_novel(name)
@@ -81,30 +81,23 @@ def download_one(*args):
                 if chapter not in all_chapters:
                     content = get_chapter_content(chapter_url)
                     insert_content(_id, title, content, chapter)
-                    return content
 
 
 def download_many_content(cc_list):
-    with futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        to_do = []
-        for _ in cc_list:
-            future = executor.submit(download_one, *_)
-            to_do.append(future)
-        for future in futures.as_completed(to_do):
-            res = future.result()
-            print(res)
+    with futures.ProcessPoolExecutor() as executor:
+        executor.map(download_one, cc_list)
 
 
 def main():
     print('time:', time.time())
     try:
-        novels = get_novels(cursor)
-        cc_list = [novel for novel in novels]
-        download_many_content(cc_list)
+        novels = get_novels()
+        # cc_list = [novel for novel in novels]
+        download_many_content(novels)
         cursor.close()
-        conn.close()  
+        conn.close()
     except Exception as e:
-        print(e)    
+        print(e)
 
 
 if __name__ == '__main__':
@@ -116,7 +109,7 @@ if __name__ == '__main__':
     # get_ids(27)
     main()
     sched = BlockingScheduler()
-    sched.add_job(main, 'interval', minutes=1)
+    sched.add_job(main, 'interval', minutes=30)
     sched.start()
     # for novel in novels:
     #     print(novel)

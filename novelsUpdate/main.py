@@ -2,13 +2,20 @@
 # -*- coding: utf-8 -*-
 
 import re
-import time
+import logging
 from apscheduler.schedulers.blocking import BlockingScheduler
 import pymysql
 from concurrent import futures
 
 from getter import get_novel, get_novel_info, get_novel_chapters, get_chapter_content
 from chinese_digit import getResultForDigit
+
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s [line:%(lineno)d] %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    filename='novel.log',
+                    filemode='w')
 
 MAX_WORKERS = 20
 
@@ -32,7 +39,7 @@ def connect_sql(
 
 
 def get_novels():
-    sql = 'select id, name from novels limit 2, 3;'
+    sql = 'select id, name from novels;'
     cursor.execute(sql)
     values = cursor.fetchall()
     for value in values:
@@ -45,13 +52,12 @@ def insert_content(_id, title, content, chapter):
         cursor.execute(sql, (title, content, chapter, _id))
         conn.commit()
     except Exception as e:
-        print(e)
+        logging.info(e)
         conn.rollback()
 
 
 def get_ids(novel_id):
     sql = 'select chapter from chapters where novel_id = {}'.format(novel_id)
-    print('sql:', sql)
     cursor.execute(sql)
     chapters = cursor.fetchall()
     all_chapters = []
@@ -65,20 +71,20 @@ def download_one(args):
     _id, name = args
     all_chapters = get_ids(_id)
     novel_url = get_novel(name)
-    print('novel_url:', novel_url)
+    logging.info(novel_url)
     if novel_url is not None:
         name, author = get_novel_info(novel_url)
-        print('name:', name, 'author:', author)
+        # print('name:', name, 'author:', author)
         chapters = get_novel_chapters(novel_url)
         for _ in chapters:
             title, chapter_url = _
             try:
                 chapter = re.findall(r'\d{1,}', title)[0] if re.findall(r'\d{1,}', title) else getResultForDigit(title.split()[0].replace('第', '').replace('章', ''))
             except Exception as e:
-                print(e)
+                logging.info(e)
             else:
                 # print(chapter, title, chapter_url)
-                if chapter not in all_chapters:
+                if int(chapter) not in all_chapters:
                     content = get_chapter_content(chapter_url)
                     insert_content(_id, title, content, chapter)
 
@@ -89,7 +95,9 @@ def download_many_content(cc_list):
 
 
 def main():
-    print('time:', time.time())
+    global conn, cursor
+    conn = connect_sql()
+    cursor = conn.cursor()
     try:
         novels = get_novels()
         # cc_list = [novel for novel in novels]
@@ -97,13 +105,10 @@ def main():
         cursor.close()
         conn.close()
     except Exception as e:
-        print(e)
+        logging.info(e)
 
 
 if __name__ == '__main__':
-    conn = connect_sql()
-    print(conn)
-    cursor = conn.cursor()
     # cc_list = [(novel[0], novel[1]) for novel in novels]
     # print(cc_list)
     # get_ids(27)

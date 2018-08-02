@@ -26,3 +26,13 @@ def retry(retries=3):
                 index += 1
         return decorator()
     return retry
+
+
+# 类装饰器
+class DecoratorAsClass(object):
+    def __init__(self, function):
+        self.function = function
+
+    def __call__(self, *args, **kw):
+        result = self.function(*args, **kw)
+        return result

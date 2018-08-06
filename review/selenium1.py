@@ -4,7 +4,7 @@
 # @Date:   2018-08-05 19:58:46
 # @Email: liushahedi@gmail.com
 # @Last Modified by:   AlphaFF
-# @Last Modified time: 2018-08-05 20:51:22
+# @Last Modified time: 2018-08-06 20:48:29
 
 
 from selenium import webdriver
@@ -67,11 +67,35 @@ browser = webdriver.Chrome()
 
 
 # 动作链
-url = 'http://www.runoob.com/try/try.php?filename=jqueryui-api-droppable'
-browser.get(url)
-browser.switch_to.frame('iframeResult')
-source = browser.find_elements_by_css_selector('#draggable')
-target = browser.find_elements_by_css_selector('#droppable')
-actions = ActionChains(browser)
-actions.drag_and_drop(source, target)
-actions.perform()
+# url = 'http://www.runoob.com/try/try.php?filename=jqueryui-api-droppable'
+# browser.get(url)
+# browser.switch_to.frame('iframeResult')
+# source = browser.find_elements_by_css_selector('#draggable')
+# target = browser.find_elements_by_css_selector('#droppable')
+# actions = ActionChains(browser)
+# actions.drag_and_drop(source, target)
+# actions.perform()
+
+# 执行js execute_script
+browser.get('https://www.zhihu.com/explore')
+browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
+browser.execute_script('alert("To Bottom")')
+
+# 获取属性 get_attribute()
+logo = browser.find_element_by_id('zh-top-link-logo')
+print(logo)
+print(logo.get_attribute('class'))
+
+# 获取文本值 .text 
+input = browser.find_element_by_class_name('zu-top-add-question')
+print(input.text)
+
+# 获取id、位置、标签名和大小
+input = browser.find_element_by_class_name('zu-top-add-question')
+print(input.id)
+print(input.location)
+print(input.tag_name)
+print(input.size)
+
+# 切换Frame
+

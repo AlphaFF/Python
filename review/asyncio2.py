@@ -4,7 +4,7 @@
 # @Date:   2018-08-15 20:48:22
 # @Email: liushahedi@gmail.com
 # @Last Modified by:   AlphaFF
-# @Last Modified time: 2018-08-15 22:13:28
+# @Last Modified time: 2018-08-16 10:55:56
 
 
 import asyncio
@@ -114,15 +114,33 @@ async def main():
             logger.info('a is %s and res is %s ', num, res_a)
 
 
+async def fetch_async1(a):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(URL.format(a)) as r:
+            data = await r.json()
+            return a, data['args']['a']
+
+
 t0 = time.time()
 loop = asyncio.get_event_loop()
-# tasks = [fetch_async(session, num) for num in NUMBERS]
-# results = loop.run_until_complete(asyncio.gather(*tasks))
-loop.run_until_complete(main())
+tasks = [fetch_async1(num) for num in NUMBERS]
+# results = loop.run_until_complete(asyncio.gather(*tasks))     # 按顺序收集异步执行的结果
+completed, pending = loop.run_until_complete(asyncio.wait(tasks))
+# loop.run_until_complete(main())
 loop.close()
+
+# for num, result in results:
+#     logger.info('fetch(%s) = %s', num, result)
+
+for result in completed:
+    logger.info(result.result())
 
 # for num, result in zip(NUMBERS, results):
 #     logger.info('fetch(%s) = %s', num, result)
 
 t1 = time.time()
 logger.info('asyncio + aiohttp cost: %s', t1 - t0)
+
+"""
+INFO:__main__:asyncio + aiohttp cost: 0.7476761341094971
+"""

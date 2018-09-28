@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # coding=utf-8
 
+import re
+import json
 import requests
 from lxml import etree
 
@@ -143,6 +145,17 @@ class ProxyGetter(object):
     #     except Exception as e:
     #         print(e)
     #         pass
+
+    # 爬取代理服务器网
+    def crawl_cnproxy(self):
+        # cnproxy url = 'http://www.cnproxy.com/proxy1.html'
+        url = 'http://proxylist.fatezero.org/proxy.list'
+        res = requests.get(url)
+        proxy_list = re.findall(r'{.*?}', res.text)
+        for _ in proxy_list:
+            origin_proxy = json.loads(_)
+            proxy = ''.join([origin_proxy.get('host'), ':', str(origin_proxy.get('port'))])
+            yield proxy
 
     def run(self):
         s = dir(self)

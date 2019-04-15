@@ -4,7 +4,7 @@
 # @Date:   2019-04-10 16:15:40
 # @Email: liushahedi@gmail.com
 # @Last Modified by:   AlphaFF
-# @Last Modified time: 2019-04-12 17:26:56
+# @Last Modified time: 2019-04-15 16:29:11
 
 """
 class User(Model):
@@ -160,3 +160,168 @@ print(obj.data, Test.data)
 obj.__dict__['prop'] = 'hahahaha'
 print(vars(obj))
 print(obj.data, obj.prop, Test.prop)
+
+
+class Stack:
+    def __init__(self):
+        self.items = []
+
+    def push(self, value):
+        self.items.append(value)
+
+    def pop(self):
+        return self.items.pop()
+
+    def peek(self):
+        return self.items[-1]
+
+    def isEmpty(self):
+        return len(self.items) == 0
+
+    def size(self):
+        return len(self.items)
+
+
+def checker(symbol_string):
+    s = Stack()
+    balanced = True
+    index = 0
+    while index < len(symbol_string) and balanced:
+        symbol = symbol_string[index]
+        if symbol in '([{':
+            s.push(symbol)
+        else:
+            if s.isEmpty():
+                balanced = False
+            else:
+                top = s.pop()
+                if not matches(top, symbol):
+                    balanced = False
+        index += 1
+    if balanced and s.isEmpty():
+        return True
+    else:
+        return False
+
+
+def matches(open, close):
+    opens = '([{'
+    closes = ')]}'
+    return opens.index(open) == closes.index(close)
+
+
+def base_converter(dec_number, base):
+    digits = '0123456789ABCDEF'
+
+    remstack = Stack()
+
+    while dec_number > 0:
+        remstack.push(dec_number % base)
+        dec_number = dec_number // base
+
+    new_string = ''
+    while not remstack.isEmpty():
+        new_string += digits[remstack.pop()]
+
+    return new_string
+
+
+print(base_converter(25, 16))
+
+
+class Queue:
+    def __init__(self):
+        self.items = []
+
+    def enqueue(self, value):
+        # self.items.append(value)
+        self.items.insert(0, value)
+
+    def dequeue(self, value):
+        self.items.pop()
+
+    def is_empty(self):
+        return self.items == []
+
+    def size(self):
+        return len(self.items)
+
+
+class Deque:
+    def __init__(self):
+        self.items = []
+
+    def add_front(self, item):
+        self.items.insert(0, item)
+
+    def add_rear(self, item):
+        self.items.append(item)
+
+    def remove_front(self, item):
+        self.items.pop(1)
+
+    def remove_rear(self, item):
+        self.items.pop()
+
+    def is_empty(self):
+        return self.items
+
+    def size(self):
+        return len(self.items)
+
+
+class Test:
+    __slots__ = ('name', 'age')
+
+
+t = Test()
+t.name = 'zhangsan'
+t.age = 12
+Test.money = 'yelu'
+
+
+class Quantity:
+    def __init__(self, storage_name):
+        self.storage_name = storage_name
+
+    def __set__(self, instance, value):
+        if value > 0:
+            instance.__dict__[self.storage_name] = value
+        else:
+            raise ValueError('value must be > 0.')
+
+
+class LineItem:
+    weight = Quantity('weight')
+    price = Quantity('price')
+
+    def __init__(self, description, weight, price):
+        self.description = description
+        self.weight = weight
+        self.price = price
+
+    def subtotal(self):
+        return self.weight * self.price
+
+
+l = LineItem('three', 12, 40)
+
+
+class Test1:
+    # name = 'zhangsan'
+
+    def __init__(self, name):
+        self._name = name
+
+    @property
+    def name(self):
+        return '123'
+
+    @name.setter
+    def name(self, name):
+        self._name = name
+
+
+t = Test1('lisi')
+print(Test1.name)
+print(t.name)
